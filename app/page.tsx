@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 export default function JunggoPhoneBox() {
   const [products, setProducts] = useState<any[]>([]);
   const [search, setSearch] = useState("");
+  const [category, setCategory] = useState("구매");
 
   useEffect(() => {
     const loadData = async () => {
@@ -25,7 +26,8 @@ export default function JunggoPhoneBox() {
             model: cols[0],
             price: cols[1],
             status: cols[2],
-            image: cols[3],
+            category: cols[3],
+            image: cols[4],
           };
         });
 
@@ -35,9 +37,11 @@ export default function JunggoPhoneBox() {
     loadData();
   }, []);
 
-  const filteredProducts = products.filter((item) =>
-    item.model?.toLowerCase().includes(search.toLowerCase())
-  );
+  const filteredProducts = products
+    .filter((item) =>
+      item.model?.toLowerCase().includes(search.toLowerCase())
+    )
+    .filter((item) => item.category === category);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -51,8 +55,6 @@ export default function JunggoPhoneBox() {
           </a>
 
           <div className="flex gap-6 text-sm font-medium">
-            <a href="/buy">매입</a>
-            <a href="/sell">판매</a>
             <a href="#products">시세표</a>
             <a href="#contact">문의하기</a>
           </div>
@@ -69,11 +71,11 @@ export default function JunggoPhoneBox() {
           </div>
 
           <h1 className="text-5xl md:text-7xl font-bold mb-6">
-            중고폰 시세표
+            중고폰박스
           </h1>
 
           <p className="text-xl text-gray-300 mb-10">
-            아이폰 · 갤럭시 실시간 시세 확인
+            구매 · 판매 · 아이폰 수리
           </p>
 
           <div className="max-w-xl mx-auto">
@@ -86,6 +88,43 @@ export default function JunggoPhoneBox() {
             />
           </div>
 
+          <div className="flex flex-wrap justify-center gap-4 mt-8">
+
+            <button
+              onClick={() => setCategory("구매")}
+              className={`px-8 py-4 rounded-2xl font-bold ${
+                category === "구매"
+                  ? "bg-white text-black"
+                  : "bg-gray-700 text-white"
+              }`}
+            >
+              핸드폰 구매
+            </button>
+
+            <button
+              onClick={() => setCategory("판매")}
+              className={`px-8 py-4 rounded-2xl font-bold ${
+                category === "판매"
+                  ? "bg-white text-black"
+                  : "bg-gray-700 text-white"
+              }`}
+            >
+              핸드폰 판매
+            </button>
+
+            <button
+              onClick={() => setCategory("수리")}
+              className={`px-8 py-4 rounded-2xl font-bold ${
+                category === "수리"
+                  ? "bg-white text-black"
+                  : "bg-gray-700 text-white"
+              }`}
+            >
+              아이폰 수리
+            </button>
+
+          </div>
+
         </div>
       </section>
 
@@ -94,19 +133,16 @@ export default function JunggoPhoneBox() {
         id="products"
         className="max-w-7xl mx-auto px-5 py-20"
       >
-        <div className="flex justify-between items-center mb-10">
 
-          <div>
-            <h2 className="text-4xl font-bold">
-              실시간 시세
-            </h2>
+        <h2 className="text-4xl font-bold mb-10">
 
-            <p className="text-gray-500 mt-2">
-              구글 시트와 연동된 최신 가격
-            </p>
-          </div>
+          {category === "구매" && "핸드폰 구매"}
 
-        </div>
+          {category === "판매" && "핸드폰 판매"}
+
+          {category === "수리" && "아이폰 수리"}
+
+        </h2>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
 
@@ -136,7 +172,7 @@ export default function JunggoPhoneBox() {
                   {item.model}
                 </h3>
 
-                <div className="text-3xl font-bold">
+                <div className="text-3xl font-bold text-red-600">
                   {Number(item.price).toLocaleString()}원
                 </div>
 
@@ -146,6 +182,7 @@ export default function JunggoPhoneBox() {
           ))}
 
         </div>
+
       </section>
 
       {/* CONTACT */}
@@ -160,7 +197,7 @@ export default function JunggoPhoneBox() {
           </h2>
 
           <p className="text-gray-300 mb-10">
-            중고폰 매입 · 판매 상담
+            중고폰 구매 · 판매 · 수리 상담
           </p>
 
           <div className="space-y-4 text-lg mb-10">
@@ -192,7 +229,6 @@ export default function JunggoPhoneBox() {
         </div>
       </section>
 
-      {/* FLOATING BUTTON */}
       <a
         href="https://open.kakao.com/o/s2vBY4xi"
         target="_blank"
