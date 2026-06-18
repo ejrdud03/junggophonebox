@@ -5,7 +5,6 @@ import { useEffect, useState } from "react";
 export default function JunggoPhoneBox() {
   const [products, setProducts] = useState<any[]>([]);
   const [search, setSearch] = useState("");
-  const [category, setCategory] = useState("전체");
 
   useEffect(() => {
     const loadData = async () => {
@@ -36,30 +35,24 @@ export default function JunggoPhoneBox() {
     loadData();
   }, []);
 
-  const filteredProducts = products.filter((item) => {
-    const matchSearch = item.model
-      .toLowerCase()
-      .includes(search.toLowerCase());
+  const iphoneProducts = products.filter(
+    (item) =>
+      item.model?.includes("아이폰") &&
+      item.model?.toLowerCase().includes(search.toLowerCase())
+  );
 
-    const matchCategory =
-      category === "전체"
-        ? true
-        : category === "아이폰"
-        ? item.model.includes("아이폰")
-        : item.model.includes("갤럭시");
-
-    return matchSearch && matchCategory;
-  });
+  const galaxyProducts = products.filter(
+    (item) =>
+      item.model?.includes("갤럭시") &&
+      item.model?.toLowerCase().includes(search.toLowerCase())
+  );
 
   return (
     <div className="min-h-screen bg-gray-100">
-
       {/* HEADER */}
       <header className="bg-white border-b sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-5 py-4 flex justify-between items-center">
-          <h1 className="text-3xl font-bold">
-            중고폰박스
-          </h1>
+          <h1 className="text-3xl font-bold">중고폰박스</h1>
 
           <div className="hidden md:flex gap-6 text-sm">
             <a href="#products">시세표</a>
@@ -72,11 +65,11 @@ export default function JunggoPhoneBox() {
       <section className="bg-black text-white">
         <div className="max-w-7xl mx-auto px-5 py-20 text-center">
           <h2 className="text-5xl font-bold mb-4">
-            중고폰 시세표
+            중고폰 실시간 시세표
           </h2>
 
           <p className="text-gray-300 text-lg">
-            실시간 매입 시세 업데이트
+            구글 시트와 자동 연동됩니다.
           </p>
         </div>
       </section>
@@ -86,93 +79,90 @@ export default function JunggoPhoneBox() {
         id="products"
         className="max-w-7xl mx-auto px-5 py-16"
       >
-        <h3 className="text-3xl font-bold mb-8">
-          실시간 시세
-        </h3>
-
-        <div className="flex flex-col md:flex-row gap-4 mb-8">
+        <div className="mb-10">
           <input
             type="text"
-            placeholder="기종 검색"
+            placeholder="기종 검색 (예: 아이폰15, 갤럭시S24)"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="border rounded-2xl px-4 py-3 flex-1"
+            className="w-full border rounded-2xl px-5 py-4"
           />
-
-          <div className="flex gap-2">
-            <button
-              onClick={() => setCategory("전체")}
-              className={`px-5 py-3 rounded-2xl ${
-                category === "전체"
-                  ? "bg-black text-white"
-                  : "bg-white border"
-              }`}
-            >
-              전체
-            </button>
-
-            <button
-              onClick={() => setCategory("아이폰")}
-              className={`px-5 py-3 rounded-2xl ${
-                category === "아이폰"
-                  ? "bg-black text-white"
-                  : "bg-white border"
-              }`}
-            >
-              아이폰
-            </button>
-
-            <button
-              onClick={() => setCategory("갤럭시")}
-              className={`px-5 py-3 rounded-2xl ${
-                category === "갤럭시"
-                  ? "bg-black text-white"
-                  : "bg-white border"
-              }`}
-            >
-              갤럭시
-            </button>
-          </div>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {/* 아이폰 */}
+        <div className="mb-16">
+          <h3 className="text-3xl font-bold mb-6">
+            📱 아이폰 시세
+          </h3>
 
-          {filteredProducts.map((item, index) => (
-            <div
-              key={index}
-              className="bg-white rounded-3xl overflow-hidden border hover:shadow-2xl hover:-translate-y-1 transition-all duration-300"
-            >
-              <div className="h-56 bg-gray-100 flex items-center justify-center overflow-hidden">
-                {item.image ? (
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {iphoneProducts.map((item, index) => (
+              <div
+                key={index}
+                className="bg-white rounded-3xl overflow-hidden border hover:shadow-2xl transition"
+              >
+                <div className="h-56 bg-gray-100 overflow-hidden">
                   <img
                     src={`/phones/${item.image}`}
                     alt={item.model}
-                    className="w-full h-full object-cover hover:scale-105 transition duration-300"
+                    className="w-full h-full object-cover"
                   />
-                ) : (
-                  <span className="text-gray-400">
-                    상품 이미지
-                  </span>
-                )}
-              </div>
-
-              <div className="p-5">
-
-                <div className="text-xs text-gray-500 mb-2">
-                  {item.status}
                 </div>
 
-                <h4 className="font-bold text-lg mb-3">
-                  {item.model}
-                </h4>
+                <div className="p-5">
+                  <div className="text-sm text-gray-500 mb-2">
+                    {item.status}
+                  </div>
 
-                <div className="text-2xl font-bold text-red-600">
-                  {Number(item.price).toLocaleString()}원
+                  <h4 className="font-bold text-lg mb-3">
+                    {item.model}
+                  </h4>
+
+                  <div className="text-2xl font-bold text-red-600">
+                    {Number(item.price).toLocaleString()}원
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* 갤럭시 */}
+        <div>
+          <h3 className="text-3xl font-bold mb-6">
+            📱 갤럭시 시세
+          </h3>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {galaxyProducts.map((item, index) => (
+              <div
+                key={index}
+                className="bg-white rounded-3xl overflow-hidden border hover:shadow-2xl transition"
+              >
+                <div className="h-56 bg-gray-100 overflow-hidden">
+                  <img
+                    src={`/phones/${item.image}`}
+                    alt={item.model}
+                    className="w-full h-full object-cover"
+                  />
                 </div>
 
+                <div className="p-5">
+                  <div className="text-sm text-gray-500 mb-2">
+                    {item.status}
+                  </div>
+
+                  <h4 className="font-bold text-lg mb-3">
+                    {item.model}
+                  </h4>
+
+                  <div className="text-2xl font-bold text-red-600">
+                    {Number(item.price).toLocaleString()}원
+                  </div>
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </section>
 
@@ -182,7 +172,6 @@ export default function JunggoPhoneBox() {
         className="max-w-7xl mx-auto px-5 py-20"
       >
         <div className="bg-black text-white rounded-3xl p-10 text-center">
-
           <h3 className="text-4xl font-bold mb-4">
             빠른 문의
           </h3>
@@ -198,7 +187,6 @@ export default function JunggoPhoneBox() {
           </div>
 
           <div className="flex flex-col md:flex-row gap-4 justify-center">
-
             <a
               href="tel:01055415587"
               className="bg-white text-black px-8 py-4 rounded-2xl font-bold"
@@ -214,12 +202,11 @@ export default function JunggoPhoneBox() {
             >
               💬 카카오톡 상담
             </a>
-
           </div>
         </div>
       </section>
 
-      {/* FLOATING BUTTON */}
+      {/* 플로팅 버튼 */}
       <a
         href="https://open.kakao.com/o/s2vBY4xi"
         target="_blank"
@@ -228,7 +215,6 @@ export default function JunggoPhoneBox() {
       >
         💬 상담하기
       </a>
-
     </div>
   );
 }
